@@ -9,8 +9,6 @@ import java.util.Date;
 @Table(name = "assignment")
 public class Assignment {
 
-
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int surrogateId;
     @Id
@@ -47,10 +45,13 @@ public class Assignment {
     @Column(name = "announceddate")
     private Date announcedDate;
 
+    @Column(name = "announcerCompanyName")
+    private String announcerCompanyName;
+
 
     public Assignment() {
     }
-    public Assignment(int surrogateId, int cinodeId, String action, Date deadlineDate, String title, String description, boolean allowRemote, Date startDate, Date endDate, String city, String displayName, Date announcedDate) {
+    public Assignment(int surrogateId, int cinodeId, String action, Date deadlineDate, String title, String description, boolean allowRemote, Date startDate, Date endDate, String city, String displayName, Date announcedDate, String announcerCompanyName) {
         this.surrogateId = surrogateId;
         this.cinodeId = cinodeId;
         this.action = action;
@@ -61,7 +62,7 @@ public class Assignment {
         this.startDate = startDate;
         this.endDate = endDate;
         this.announcedDate = announcedDate;
-       // this.location = location;
+        this.announcerCompanyName = announcerCompanyName;
     }
 
     public int getSurrogateId() {
@@ -158,5 +159,13 @@ public class Assignment {
 
     public void setAnnouncedDate(Date announcedDate) {
         this.announcedDate = announcedDate;
+    }
+
+    public String getAnnouncerCompanyName() {
+        return announcerCompanyName;
+    }
+
+    public void setAnnouncerCompanyName(String announcerCompanyName) {
+        this.announcerCompanyName = announcerCompanyName;
     }
 }

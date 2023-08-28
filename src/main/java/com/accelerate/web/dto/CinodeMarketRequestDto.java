@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Assignment {
+public class CinodeMarketRequestDto {
 
     @JsonProperty("Meta")
     private Meta meta;
@@ -12,10 +12,10 @@ public class Assignment {
     @JsonProperty("Payload")
     private Payload payload;
 
-    public Assignment () {
+    public CinodeMarketRequestDto() {
     }
 
-    public Assignment(Meta meta, Payload payload) {
+    public CinodeMarketRequestDto(Meta meta, Payload payload) {
         this.meta = meta;
         this.payload = payload;
     }

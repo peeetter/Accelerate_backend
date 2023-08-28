@@ -1,6 +1,6 @@
 package com.accelerate.web.dto;
 
-import com.accelerate.web.dto.Location;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,7 +12,6 @@ public class Payload {
     @JsonProperty("DeadlineDate")
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private Date deadlineDate;
-
     @JsonProperty("Title")
     private String title;
     @JsonProperty("Description")
@@ -33,11 +32,14 @@ public class Payload {
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private Date announcedDate;
 
+    @JsonProperty("AnnouncerCompanyName")
+    private String announcerCompanyName;
+
     public Payload() {
 
     }
 
-    public Payload(Date deadlineDate, String title, String description, boolean allowRemote, Date startDate, Date endDate, Location location, Date announcedDate) {
+    public Payload(Date deadlineDate, String title, String description, boolean allowRemote, Date startDate, Date endDate, Location location, Date announcedDate, String announcerCompanyName) {
         this.deadlineDate = deadlineDate;
         this.title = title;
         this.description = description;
@@ -46,6 +48,7 @@ public class Payload {
         this.endDate = endDate;
         this.location = location;
         this.announcedDate = announcedDate;
+        this.announcerCompanyName = announcerCompanyName;
     }
 
     public Date getDeadlineDate() {
@@ -110,5 +113,13 @@ public class Payload {
 
     public void setAnnouncedDate(Date announcedDate) {
         this.announcedDate = announcedDate;
+    }
+
+    public String getAnnouncerCompanyName() {
+        return announcerCompanyName;
+    }
+
+    public void setAnnouncerCompanyName(String announcerCompanyName) {
+        this.announcerCompanyName = announcerCompanyName;
     }
 }

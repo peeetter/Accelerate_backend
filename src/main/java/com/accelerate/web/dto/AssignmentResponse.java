@@ -19,7 +19,11 @@ public class AssignmentResponse {
     public AssignmentResponse() {
     }
 
-    public AssignmentResponse(int cinodeId, String description, Date deadlineDate, String title, boolean allowRemote, Date startDate, Date endDate, String city, String displayName, Date announcedDate) {
+    public AssignmentResponse(int cinodeId, String description,
+                              Date deadlineDate, String title,
+                              boolean allowRemote, Date startDate,
+                              Date endDate, String city, String displayName,
+                              Date announcedDate) {
         this.cinodeId = cinodeId;
         this.description = description;
         this.deadlineDate = deadlineDate;

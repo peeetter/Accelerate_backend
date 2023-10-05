@@ -9,4 +9,6 @@ public interface AssignmentService  {
     List<AssignmentResponse> getAllAssignments();
 
     AssignmentResponse getAssignmentResponseById(Long id);
+
+    List<AssignmentResponse> sortCreatedDates(List<AssignmentResponse> assignmentsOfDtos);
 }

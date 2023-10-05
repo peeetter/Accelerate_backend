@@ -1,18 +1,17 @@
 package com.accelerate.web.service.cinode;
 
-import com.accelerate.web.dto.AssignmentResponse;
 import com.accelerate.web.dto.CinodeMarketRequestDto;
 import com.accelerate.web.jpa.Assignment;
 import com.accelerate.web.jpa.AssignmentRepository;
 import com.accelerate.web.mapper.WebhookJsonMapper;
 import com.accelerate.web.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CinodeServiceImpl implements CinodeService {
@@ -26,30 +25,48 @@ public class CinodeServiceImpl implements CinodeService {
 
     public String handleRequestFromCinode(String requestBody) throws JsonProcessingException {
 
-        CinodeMarketRequestDto cinodeMarketRequestDtoDto = mapper.mapWebhookJsonToDto(requestBody);
+        CinodeMarketRequestDto cinodeMarketRequest = mapper.mapWebhookJsonToCinodeMarketRequest(requestBody);
         Assignment assignmentEntity = new Assignment();
-        assignmentEntity.setAction(cinodeMarketRequestDtoDto.getMeta().getAction());
+        assignmentEntity.setAction(cinodeMarketRequest.getAction());
 
-        if ((cinodeMarketRequestDtoDto.getMeta().getAction().equals(StringUtils.CREATED) ||
-                cinodeMarketRequestDtoDto.getMeta().getAction().equals(StringUtils.UPDATED)) &&
-                cinodeMarketRequestDtoDto.getPayload().getAnnouncerCompanyName().equals(StringUtils.FOREFRONT)) {
-            mapper.mapDtoToEntity(cinodeMarketRequestDtoDto, assignmentEntity);
-            saveAssignmentToDb(assignmentEntity);
-            logger.info("cinodeMarketRequestDtoDto.getMeta().getAction(): " + cinodeMarketRequestDtoDto.getMeta().getAction() + ", cinodeMarketRequestDtoDto.getPayload().getAnnouncerCompanyName(): " + cinodeMarketRequestDtoDto.getPayload().getAnnouncerCompanyName());
-            return cinodeMarketRequestDtoDto.getMeta().getAction();
-        } else {
-            logger.info("Received webhook from other company: " + cinodeMarketRequestDtoDto.getPayload().getAnnouncerCompanyName() + ", Action: " + cinodeMarketRequestDtoDto.getMeta().getAction());
-            return "Received webhook from other company: " + cinodeMarketRequestDtoDto.getPayload().getAnnouncerCompanyName();
+        String action = cinodeMarketRequest.getAction();
+
+        if (cinodeMarketRequest.getAnnouncerCompanyName() != (StringUtils.FOREFRONT)) {
+            logger.info(StringUtils.RECEIVED_WEBHOOK_FROM_OTHER_COMPANY + cinodeMarketRequest.getAnnouncerCompanyName() + ", Action: " + cinodeMarketRequest.getAction());
+            return StringUtils.RECEIVED_WEBHOOK_FROM_OTHER_COMPANY + cinodeMarketRequest.getAnnouncerCompanyName();
+        }
+
+        switch(action) {
+            case StringUtils.CREATED, StringUtils.UPDATED -> {
+                mapper.mapDtoToEntity(cinodeMarketRequest, assignmentEntity);
+                saveAssignmentToDb(assignmentEntity);
+                logger.info("Action: " + cinodeMarketRequest.getAction() + ", set by company: " + cinodeMarketRequest.getAnnouncerCompanyName());
+                return cinodeMarketRequest.getAction();
+            }
+            case StringUtils.DELETED -> {
+                mapper.mapDtoToEntity(cinodeMarketRequest, assignmentEntity);
+                deleteAssignmentFromDb(assignmentEntity);
+                return cinodeMarketRequest.getAction();
+            }
+            default -> {
+                return "Something went wrong";
+            }
         }
     }
 
     private void saveAssignmentToDb(Assignment assignmentEntity) {
-        if (assignmentEntity.getAction().equals(StringUtils.CREATED) && assignmentEntity.getAnnouncerCompanyName().equals(StringUtils.FOREFRONT)) {
             Assignment createdEntity = repository.save(assignmentEntity);
-            logger.info("Created with: " + createdEntity);
-        } else if (assignmentEntity.getAction().equals(StringUtils.UPDATED) && assignmentEntity.getAnnouncerCompanyName().equals(StringUtils.FOREFRONT)) {
-            Assignment createdEntity = repository.save(assignmentEntity);
-            logger.info("Updated: " + createdEntity);
-        }
+            logger.info(createdEntity.getAction() + " in db: " + createdEntity);
+    }
+
+    private void deleteAssignmentFromDb(Assignment assignmentEntity) {
+            Long id = Long.valueOf(assignmentEntity.getCinodeId());
+            Optional<Assignment> foundEntity = repository.findById(id);
+            if (foundEntity.isPresent()) {
+                repository.delete(assignmentEntity);
+                logger.info("Assignment deleted with id: " + assignmentEntity.getCinodeId());
+            } else {
+                logger.info("Assignment not present with id: " + assignmentEntity.getCinodeId());
+            }
     }
 }

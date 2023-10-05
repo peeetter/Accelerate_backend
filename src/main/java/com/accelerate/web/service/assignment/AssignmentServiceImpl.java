@@ -39,11 +39,10 @@ public class AssignmentServiceImpl implements AssignmentService {
         repo.findAll().forEach(assignments::add);
         List<AssignmentResponse> assignmentsOfDtos = mapper.map(assignments, new TypeToken<List<AssignmentResponse>>(){}.getType());
         assignmentsOfDtos.stream().forEach(s -> logger.info("Assignment with values: cinodeId: " + s.getCinodeId() + ", " + "description: " + s.getDescription() + ", " + "datelineDate: " + s.getDeadlineDate() + ", " + "title: " + s.getTitle() + ", " + "allowRemote: " + s.isAllowRemote() + ", " + "startDate: " + s.getStartDate() + ", " + "endDate: " + s.getEndDate() + ", " + "city: " + s.getCity() + ", " + "displayName: " + s.getDisplayName()));
-        return compareCreatedDates(assignmentsOfDtos);
+        return sortCreatedDates(assignmentsOfDtos);
     }
 
-    public List<AssignmentResponse> compareCreatedDates(List<AssignmentResponse> assignmentsOfDtos) {
-
+    public List<AssignmentResponse> sortCreatedDates(List<AssignmentResponse> assignmentsOfDtos) {
         Collections.sort(assignmentsOfDtos, new Comparator<AssignmentResponse>() {
             @Override
             public int compare(AssignmentResponse o1, AssignmentResponse o2) {

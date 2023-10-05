@@ -1,5 +1,6 @@
 package com.accelerate.web.mapper;
 
+import com.accelerate.web.dto.CinodeMarketRequest;
 import com.accelerate.web.dto.CinodeMarketRequestDto;
 import com.accelerate.web.utils.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,48 +10,61 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebhookJsonMapper {
 
-public CinodeMarketRequestDto mapWebhookJsonToDto(String jsonObject) throws JsonProcessingException {
+public CinodeMarketRequestDto mapWebhookJsonToCinodeMarketRequest(String jsonObject) throws JsonProcessingException {
 
     ObjectMapper objectMapper = new ObjectMapper();;
-    CinodeMarketRequestDto assignments = objectMapper.readValue(jsonObject, CinodeMarketRequestDto.class);
-
-    return assignments;
-}
-
-public void mapDtoToEntity(CinodeMarketRequestDto cinodeMarketRequestDtoDto, com.accelerate.web.jpa.Assignment assignmentEntity) {
-        assignmentEntity.setCinodeId(cinodeMarketRequestDtoDto.getMeta().getCinodeId());
-        assignmentEntity.setAction(cinodeMarketRequestDtoDto.getMeta().getAction());
-        assignmentEntity.setDeadlineDate(cinodeMarketRequestDtoDto.getPayload().getDeadlineDate());
-        assignmentEntity.setTitle(cinodeMarketRequestDtoDto.getPayload().getTitle());
-        assignmentEntity.setDescription(cinodeMarketRequestDtoDto.getPayload().getDescription());
-        assignmentEntity.setAllowRemote(cinodeMarketRequestDtoDto.getPayload().isAllowRemote());
-        assignmentEntity.setStartDate(cinodeMarketRequestDtoDto.getPayload().getStartDate());
-        assignmentEntity.setEndDate(cinodeMarketRequestDtoDto.getPayload().getEndDate());
-        assignmentEntity.setAnnouncerCompanyName(cinodeMarketRequestDtoDto.getPayload().getAnnouncerCompanyName());
-        assignmentEntity.setAnnouncedDate(cinodeMarketRequestDtoDto.getPayload().getAnnouncedDate());
-        fixLocation(cinodeMarketRequestDtoDto, assignmentEntity);
-}
-
-    public void fixLocation(CinodeMarketRequestDto cinodeMarketRequestDtoDto, com.accelerate.web.jpa.Assignment assignmentEntity) {
-        if (cinodeMarketRequestDtoDto.getPayload().getLocation() == null) {
-            assignmentEntity.setCity(StringUtils.NOT_APPLICABLE);
-            assignmentEntity.setDisplayName(StringUtils.NOT_APPLICABLE);
-        } else {
-            if (cinodeMarketRequestDtoDto.getPayload().getLocation().getDisplayName() != null && cinodeMarketRequestDtoDto.getPayload().getLocation().getCity() != null) {
-                assignmentEntity.setDisplayName(cinodeMarketRequestDtoDto.getPayload().getLocation().getDisplayName());
-                assignmentEntity.setCity(cinodeMarketRequestDtoDto.getPayload().getLocation().getCity());
-            }
-            if (cinodeMarketRequestDtoDto.getPayload().getLocation().getDisplayName() != null && cinodeMarketRequestDtoDto.getPayload().getLocation().getCity() == null) {
-                assignmentEntity.setDisplayName(cinodeMarketRequestDtoDto.getPayload().getLocation().getDisplayName());
-                assignmentEntity.setCity(StringUtils.NOT_APPLICABLE);
-            }
-            if (cinodeMarketRequestDtoDto.getPayload().getLocation().getCity() != null && cinodeMarketRequestDtoDto.getPayload().getLocation().getDisplayName() == null) {
-                assignmentEntity.setCity(cinodeMarketRequestDtoDto.getPayload().getLocation().getCity());
-                assignmentEntity.setDisplayName(StringUtils.NOT_APPLICABLE);
-            }
-        }
+    CinodeMarketRequest assignments = objectMapper.readValue(jsonObject, CinodeMarketRequest.class);
+    if (assignments.getPayload().getAnnouncerCompanyName().contains("Forefront")) {
+        assignments.getPayload().setAnnouncerCompanyName(("Forefront"));
     }
 
+    CinodeMarketRequestDto cinodeMarketRequestDto = new CinodeMarketRequestDto();
+    cinodeMarketRequestDto.setCinodeId(assignments.getMeta().getCinodeId());
+    cinodeMarketRequestDto.setAction(assignments.getMeta().getAction());
+    cinodeMarketRequestDto.setTitle(assignments.getPayload().getTitle());
+    cinodeMarketRequestDto.setDescription(assignments.getPayload().getDescription());
+    cinodeMarketRequestDto.setAllowRemote(assignments.getPayload().isAllowRemote());
+    cinodeMarketRequestDto.setStartDate(assignments.getPayload().getStartDate());
+    cinodeMarketRequestDto.setEndDate(assignments.getPayload().getEndDate());
+    cinodeMarketRequestDto.setAnnouncedDate(assignments.getPayload().getAnnouncedDate());
+    cinodeMarketRequestDto.setAnnouncerCompanyName(assignments.getPayload().getAnnouncerCompanyName());
+    fixLocationForDto(assignments,cinodeMarketRequestDto);
 
+    return cinodeMarketRequestDto;
+}
+public void mapDtoToEntity(CinodeMarketRequestDto cinodeMarketRequestDto, com.accelerate.web.jpa.Assignment assignmentEntity) {
+        assignmentEntity.setCinodeId(cinodeMarketRequestDto.getCinodeId());
+        assignmentEntity.setAction(cinodeMarketRequestDto.getAction());
+        assignmentEntity.setDeadlineDate(cinodeMarketRequestDto.getDeadlineDate());
+        assignmentEntity.setTitle(cinodeMarketRequestDto.getTitle());
+        assignmentEntity.setDescription(cinodeMarketRequestDto.getDescription());
+        assignmentEntity.setAllowRemote(cinodeMarketRequestDto.isAllowRemote());
+        assignmentEntity.setStartDate(cinodeMarketRequestDto.getStartDate());
+        assignmentEntity.setEndDate(cinodeMarketRequestDto.getEndDate());
+        assignmentEntity.setAnnouncerCompanyName(cinodeMarketRequestDto.getAnnouncerCompanyName());
+        assignmentEntity.setAnnouncedDate(cinodeMarketRequestDto.getAnnouncedDate());
+        assignmentEntity.setCity(cinodeMarketRequestDto.getCity());
+        assignmentEntity.setDisplayName(cinodeMarketRequestDto.getDisplayName());
+}
+
+public void fixLocationForDto(CinodeMarketRequest cinodeMarketRequest, CinodeMarketRequestDto cinodeMarketRequestDto) {
+    if (cinodeMarketRequest.getPayload().getLocation() == null) {
+        cinodeMarketRequestDto.setCity(StringUtils.NOT_APPLICABLE);
+        cinodeMarketRequestDto.setDisplayName(StringUtils.NOT_APPLICABLE);
+    } else {
+        if (cinodeMarketRequest.getPayload().getLocation().getDisplayName() != null && cinodeMarketRequest.getPayload().getLocation().getCity() != null) {
+            cinodeMarketRequestDto.setDisplayName(cinodeMarketRequest.getPayload().getLocation().getDisplayName());
+            cinodeMarketRequestDto.setCity(cinodeMarketRequest.getPayload().getLocation().getCity());
+        }
+        if (cinodeMarketRequest.getPayload().getLocation().getDisplayName() != null && cinodeMarketRequest.getPayload().getLocation().getCity() == null) {
+            cinodeMarketRequestDto.setDisplayName(cinodeMarketRequest.getPayload().getLocation().getDisplayName());
+            cinodeMarketRequestDto.setCity(StringUtils.NOT_APPLICABLE);
+        }
+        if (cinodeMarketRequest.getPayload().getLocation().getCity() != null && cinodeMarketRequest.getPayload().getLocation().getDisplayName() == null) {
+            cinodeMarketRequestDto.setCity(cinodeMarketRequest.getPayload().getLocation().getCity());
+            cinodeMarketRequestDto.setDisplayName(StringUtils.NOT_APPLICABLE);
+        }
+    }
+}
 
 }

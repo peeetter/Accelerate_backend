@@ -1,6 +1,5 @@
 package com.accelerate.web.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,6 +33,7 @@ public class Payload {
 
     @JsonProperty("AnnouncerCompanyName")
     private String announcerCompanyName;
+
 
     public Payload() {
 

@@ -1,6 +1,7 @@
 package com.accelerate.web.controller;
 
 import com.accelerate.web.TestData.TestData;
+import com.accelerate.web.dto.CinodeMarketRequest;
 import com.accelerate.web.dto.CinodeMarketRequestDto;
 import com.accelerate.web.mapper.WebhookJsonMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,8 +18,6 @@ class WebHookJsonMapperTest {
     TestData testData = new TestData();
     WebhookJsonMapper mapper = new WebhookJsonMapper();
 
-    ModelMapper modelMapper = new ModelMapper();
-
 
     @Test
     void testTestDataAllFieldsWhenLocationIsNull() throws JsonProcessingException {
@@ -28,16 +27,16 @@ class WebHookJsonMapperTest {
         com.accelerate.web.jpa.Assignment assignmentEntity = new com.accelerate.web.jpa.Assignment();
         mapper.mapDtoToEntity(webHookJson, assignmentEntity);
 
-        int expectedCinodeId = webHookJson.getMeta().getCinodeId();
-        String expectedAction = webHookJson.getMeta().getAction();
-        Date expectedDeadlineDate = webHookJson.getPayload().getDeadlineDate();
-        String expectedTitle = webHookJson.getPayload().getTitle();
-        String expectedDescription = webHookJson.getPayload().getDescription();
-        Boolean expectedAllowRemote = webHookJson.getPayload().isAllowRemote();
-        Date expectedStartDate = webHookJson.getPayload().getStartDate();
-        Date expectedEndDate = webHookJson.getPayload().getEndDate();
-        Date announcedDate = webHookJson.getPayload().getAnnouncedDate();
-        String announcerCompanyName = webHookJson.getPayload().getAnnouncerCompanyName();
+        int expectedCinodeId = webHookJson.getCinodeId();
+        String expectedAction = webHookJson.getAction();
+        Date expectedDeadlineDate = webHookJson.getDeadlineDate();
+        String expectedTitle = webHookJson.getTitle();
+        String expectedDescription = webHookJson.getDescription();
+        Boolean expectedAllowRemote = webHookJson.isAllowRemote();
+        Date expectedStartDate = webHookJson.getStartDate();
+        Date expectedEndDate = webHookJson.getEndDate();
+        Date announcedDate = webHookJson.getAnnouncedDate();
+        String announcerCompanyName = webHookJson.getAnnouncerCompanyName();
         String expectedCity = "n/a";
         String expectedDisplayName = "n/a";
 
@@ -63,18 +62,18 @@ class WebHookJsonMapperTest {
         com.accelerate.web.jpa.Assignment assignmentEntity = new com.accelerate.web.jpa.Assignment();
         mapper.mapDtoToEntity(webHookJson, assignmentEntity);
 
-        int expectedCinodeId = webHookJson.getMeta().getCinodeId();
-        String expectedAction = webHookJson.getMeta().getAction();
-        Date expectedDeadlineDate = webHookJson.getPayload().getDeadlineDate();
-        String expectedTitle = webHookJson.getPayload().getTitle();
-        String expectedDescription = webHookJson.getPayload().getDescription();
-        Boolean expectedAllowRemote = webHookJson.getPayload().isAllowRemote();
-        Date expectedStartDate = webHookJson.getPayload().getStartDate();
-        Date expectedEndDate = webHookJson.getPayload().getEndDate();
-        Date announcedDate = webHookJson.getPayload().getAnnouncedDate();
-        String announcerCompanyName = webHookJson.getPayload().getAnnouncerCompanyName();
-        String expectedCity = webHookJson.getPayload().getLocation().getCity();
-        String expectedDisplayName = webHookJson.getPayload().getLocation().getDisplayName();
+        int expectedCinodeId = webHookJson.getCinodeId();
+        String expectedAction = webHookJson.getAction();
+        Date expectedDeadlineDate = webHookJson.getDeadlineDate();
+        String expectedTitle = webHookJson.getTitle();
+        String expectedDescription = webHookJson.getDescription();
+        Boolean expectedAllowRemote = webHookJson.isAllowRemote();
+        Date expectedStartDate = webHookJson.getStartDate();
+        Date expectedEndDate = webHookJson.getEndDate();
+        Date announcedDate = webHookJson.getAnnouncedDate();
+        String announcerCompanyName = webHookJson.getAnnouncerCompanyName();
+        String expectedCity = webHookJson.getCity();
+        String expectedDisplayName = webHookJson.getDisplayName();
 
 
         assertEquals(expectedCinodeId, assignmentEntity.getCinodeId());
@@ -101,8 +100,8 @@ class WebHookJsonMapperTest {
         com.accelerate.web.jpa.Assignment assignmentEntity = new com.accelerate.web.jpa.Assignment();
         mapper.mapDtoToEntity(webHookJson, assignmentEntity);
 
-        String expectedCity = webHookJson.getPayload().getLocation().getCity();
-        String expectedDisplayName = webHookJson.getPayload().getLocation().getDisplayName();
+        String expectedCity = webHookJson.getCity();
+        String expectedDisplayName = webHookJson.getDisplayName();
 
 
         assertEquals(expectedCity, assignmentEntity.getCity());
@@ -119,7 +118,7 @@ class WebHookJsonMapperTest {
         com.accelerate.web.jpa.Assignment assignmentEntity = new com.accelerate.web.jpa.Assignment();
         mapper.mapDtoToEntity(webHookJson, assignmentEntity);
 
-        String expectedCity = webHookJson.getPayload().getLocation().getCity();
+        String expectedCity = webHookJson.getCity();
         String expectedDisplayName = "n/a";
 
 
@@ -138,31 +137,10 @@ class WebHookJsonMapperTest {
 
 
         String expectedCity = "n/a";
-        String expectedDisplayName = webHookJson.getPayload().getLocation().getDisplayName();
+        String expectedDisplayName = webHookJson.getDisplayName();
 
 
         assertEquals(expectedCity, assignmentEntity.getCity());
         assertEquals(expectedDisplayName, assignmentEntity.getDisplayName());
     }
-
-
-
-
 }
-
-
-/*
-        System.out.println("expectedCinodeId: " + expectedCinodeId);
-                System.out.println("expectedAction: " + expectedAction);
-                System.out.println("expectedDeadlineDate: " + expectedDeadlineDate);
-                System.out.println("expectedTitle: " + expectedTitle);
-                System.out.println("expectedDescription: " + expectedDescription);
-                System.out.println("expectedAllowRemote: " + expectedAllowRemote);
-                System.out.println("expectedStartDate: " + expectedStartDate);
-                System.out.println("expectedEndDate: " + expectedEndDate);
-                System.out.println("announcedDate: " + announcedDate);
-                System.out.println("announcerCompanyName: " + announcerCompanyName);
-                System.out.println("city: " + expectedCity);
-                System.out.println("getDisplayName: " + expectedDisplayName);
-
- */
